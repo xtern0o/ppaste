@@ -12,7 +12,6 @@ class EditorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-
         self.sql_connect = sqlite3.connect('database/pcode_data.db')
         self.sql_create_table_query = "CREATE TABLE IF NOT EXISTS pcode_data(pcode TEXT, paste TEXT, page TEXT);"
         self.sql_cursor = self.sql_connect.cursor()
