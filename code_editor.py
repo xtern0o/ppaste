@@ -12,7 +12,6 @@ class EditorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-
         self.sql_connect = sqlite3.connect('database/pcode_data.db')
         self.sql_create_table_query = "CREATE TABLE IF NOT EXISTS pcode_data(pcode TEXT, paste TEXT, page TEXT);"
         self.sql_cursor = self.sql_connect.cursor()
@@ -182,7 +181,7 @@ class EditorWindow(QMainWindow):
         self.file_view.setItemText(6, _translate("MainWindow", "7"))
         self.file_view.setItemText(7, _translate("MainWindow", "8"))
         self.create_paste_btn.setText(_translate("MainWindow", "Z"))
-        self.to_this_btn.setText(_translate("MainWindow", "<"))
+        self.to_this_btn.setText(_translate("MainWindow", "set"))
 
     def generate_pcode(self):
         CHARS = ascii_letters + digits
@@ -220,10 +219,27 @@ class EditorWindow(QMainWindow):
         try:
             sql_connect = sqlite3.connect('database/pcode_data.db')
             sql_cursor = sql_connect.cursor()
+
             sql_cursor.execute("SELECT * FROM pcode_data")
             all_values = sql_cursor.fetchall()
-            print(all_values)
-            # sql_cursor.execute("UPDATE pcode_data SET text_{}={}")
+            all_pcodes_pages = list(map(lambda n: (n[0], n[2]), all_values))
+            pages_in_pcodes = {}    # {pcode: [page1, page2, ...], ...}
+            for row in all_pcodes_pages:
+                pages_in_pcodes[row[0]] = []
+
+            for row in all_pcodes_pages:
+                pages_in_pcodes[row[0]].append(row[1])
+
+            if self.file_view.currentText() in pages_in_pcodes[self.pcode]:
+                sql_request = "SELECT * FROM pcode_data WHERE pcode = ? AND page = ?"
+                sql_values = (self.pcode, self.file_view.currentText())
+                sql_cursor.execute(sql_request, sql_values)
+                text_in_db = sql_cursor.fetchall()[-1]
+                print(text_in_db)
+                self.textEdit.setText(text_in_db[1])
+            else:
+                self.textEdit.setText('[!] This page does not exists')
+
         except sqlite3.Error as error:
             print('[!] sqlite3 error:', error)
 
