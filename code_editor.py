@@ -1,7 +1,7 @@
 import sqlite3
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5 import QtCore, QtGui, QtWidgets, Qt
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from pyperclip import copy
 from string import ascii_letters, digits
@@ -150,6 +150,7 @@ class EditorWindow(QMainWindow):
         self.copy_pc_btn.clicked.connect(lambda: copy(self.pcode))
         self.save_btn.clicked.connect(lambda: self.save_paste())
         self.to_this_btn.clicked.connect(lambda: self.change_file())
+        self.delete_paste_btn.clicked.connect(lambda: self.delete_paste())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -238,3 +239,51 @@ class EditorWindow(QMainWindow):
 
         except sqlite3.Error as error:
             print('[!] sqlite3 error:', error)
+
+    def delete_paste(self):
+        sql_connect = sqlite3.connect("database\pcode_data.db")
+        sql_cursor = sql_connect.cursor()
+        sql_request_exec = "SELECT * FROM pcode_data WHERE pcode = ?"
+        sql_request_values = self.pcode,
+        sql_cursor.execute(sql_request_exec, sql_request_values)
+        data = sql_cursor.fetchall()
+        sql_cursor.close()
+        if not data:
+            error = QMessageBox()
+            error.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+            error.setStyleSheet("background-color: rgb(73, 40, 40);\n"
+"gridline-color: rgb(71, 71, 71);\n"
+"border-color: rgb(118, 118, 118);\n"
+"color: rgb(220, 220, 220);\n"
+"selection-background-color: rgb(252, 165, 3);\n"
+"selection-color: rgb(43, 43, 43);\n"
+"")
+            error.setText("You didn't create and save this paste")
+            error.setIcon(QMessageBox.Warning)
+            error.setStandardButtons(QMessageBox.Ok)
+            error.exec_()
+        else:
+            msg = QMessageBox()
+            msg.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+            msg.setStyleSheet("background-color: rgb(48, 49, 00);\n"
+                                "gridline-color: rgb(71, 71, 71);\n"
+                                "border-color: rgb(118, 118, 118);\n"
+                                "color: rgb(220, 220, 220);\n"
+                                "selection-background-color: rgb(252, 165, 3);\n"
+                                "selection-color: rgb(43, 43, 43);\n"
+                                "")
+            msg.setText("Are you sure want to delete this ppaste?\n"
+                        "It will be impossible to get it back.")
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+            msg.exec_()
+            print(data)
+
+    def delete_yes(self):
+        sql_connect = sqlite3.connect("database\pcode_data.db")
+        sql_cursor = sql_connect.cursor()
+        sql_request_exec = "DELETE * FROM pcode_data WHERE pcode = ?"
+        sql_request_values = self.pcode,
+        sql_cursor.execute(sql_request_exec, sql_request_values)
+        sql_cursor.close()
+        self.generate_pcode()
