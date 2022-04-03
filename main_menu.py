@@ -4,6 +4,8 @@ import sqlite3
 
 from code_editor import EditorWindow
 
+import time
+
 
 class MainMenu(QMainWindow):
     def __init__(self):
@@ -28,6 +30,27 @@ class MainMenu(QMainWindow):
         font.setWeight(75)
         self.plus_paste_btn.setFont(font)
         self.plus_paste_btn.setObjectName("plus_paste_btn")
+        self.plus_paste_btn.setStyleSheet("""QPushButton:!hover { 
+	background-color:#404040;
+	border-radius:8px;
+	display:inline-block;
+	color:#e6e6e6;
+	font-family:Arial;
+	font-size:19px;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+QPushButton:hover { 
+	background-color:#9c8502; 
+	border-radius:8px;
+	display:inline-block;
+	color:#e6e6e6;
+	font-family:Arial;
+	font-size:19px;
+	font-weight:bold;
+	text-decoration:none;
+}""")
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setGeometry(QtCore.QRect(20, 120, 351, 121))
         self.groupBox_2.setObjectName("groupBox_2")
@@ -40,6 +63,27 @@ class MainMenu(QMainWindow):
         self.search_paste_lbl.setObjectName("search_paste_lbl")
         self.search_btn = QtWidgets.QPushButton(self.groupBox_2)
         self.search_btn.setGeometry(QtCore.QRect(270, 40, 71, 51))
+        self.search_btn.setStyleSheet("""QPushButton:!hover { 
+	background-color:#404040;
+	border-radius:8px;
+	display:inline-block;
+	color:#e6e6e6;
+	font-family:Arial;
+	font-size:19px;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+QPushButton:hover { 
+	background-color:#9c8502; 
+	border-radius:8px;
+	display:inline-block;
+	color:#e6e6e6;
+	font-family:Arial;
+	font-size:19px;
+	font-weight:bold;
+	text-decoration:none;
+}""")
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -54,6 +98,10 @@ class MainMenu(QMainWindow):
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
+        self.warning_lab = QtWidgets.QLabel(self)
+        self.warning_lab.setGeometry(QtCore.QRect(20, 250, 351, 41))
+        self.warning_lab.setStyleSheet('font: 75 14pt "Courier New"; color: rgb(255, 88, 47);')
+        self.warning_lab.setText('')
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -86,6 +134,7 @@ class MainMenu(QMainWindow):
 
             if not sql_cursor.fetchone():
                 print('No')
+                self.warning_lab.setText("Invalid Pcode")
             else:
                 self.editor_win = EditorWindow()
                 self.editor_win.pcode_label.setText(self.search_paste_lbl.text())
@@ -95,6 +144,7 @@ class MainMenu(QMainWindow):
             sql_cursor.close()
         except sqlite3.Error as error:
             print('[!] sqlite3 error:', error)
+
 
 if __name__ == "__main__":
     import sys

@@ -1,11 +1,13 @@
 import sqlite3
-import os
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 
 from pyperclip import copy
 from string import ascii_letters, digits
 from random import sample
+
+from stylesheet import *
 
 
 class EditorWindow(QMainWindow):
@@ -32,8 +34,15 @@ class EditorWindow(QMainWindow):
 "")
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
-        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(10, 150, 781, 581))
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(9, 158, 781, 571))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetMaximumSize)
+        self.verticalLayout.setObjectName("verticalLayout")
+
+        self.textEdit = QtWidgets.QTextEdit(self.verticalLayoutWidget)
         font = QtGui.QFont()
         font.setFamily("Courier New")
         font.setPointSize(14)
@@ -43,6 +52,7 @@ class EditorWindow(QMainWindow):
         self.textEdit.setFont(font)
         self.textEdit.setStyleSheet("font: 14pt \"Courier New\";")
         self.textEdit.setObjectName("textEdit")
+        self.verticalLayout.addWidget(self.textEdit)
         self.copy_btn = QtWidgets.QPushButton(self.centralwidget)
         self.copy_btn.setGeometry(QtCore.QRect(10, 57, 181, 41))
         font = QtGui.QFont()
@@ -50,12 +60,7 @@ class EditorWindow(QMainWindow):
         font.setBold(True)
         font.setWeight(75)
         self.copy_btn.setFont(font)
-        self.copy_btn.setStyleSheet("background-color: rgb(49, 49, 49);\n"
-"gridline-color: rgb(71, 71, 71);\n"
-"border-color: rgb(118, 118, 118);\n"
-"color: rgb(220, 220, 220);\n"
-"selection-background-color: rgb(252, 165, 3);\n"
-"selection-color: rgb(43, 43, 43);")
+        set_button_stylesheet(self.copy_btn)
         self.copy_btn.setObjectName("copy_btn")
         self.save_btn = QtWidgets.QPushButton(self.centralwidget)
         self.save_btn.setGeometry(QtCore.QRect(10, 100, 181, 41))
@@ -64,12 +69,7 @@ class EditorWindow(QMainWindow):
         font.setBold(True)
         font.setWeight(75)
         self.save_btn.setFont(font)
-        self.save_btn.setStyleSheet("background-color: rgb(49, 49, 49);\n"
-"gridline-color: rgb(71, 71, 71);\n"
-"border-color: rgb(118, 118, 118);\n"
-"color: rgb(220, 220, 220);\n"
-"selection-background-color: rgb(252, 165, 3);\n"
-"selection-color: rgb(43, 43, 43);")
+        set_button_stylesheet(self.save_btn)
         self.save_btn.setObjectName("save_btn")
         self.pcode_gb = QtWidgets.QGroupBox(self.centralwidget)
         self.pcode_gb.setGeometry(QtCore.QRect(420, 10, 371, 131))
@@ -83,28 +83,24 @@ class EditorWindow(QMainWindow):
         self.pcode_label.setFrameShape(QtWidgets.QFrame.Box)
         self.pcode_label.setObjectName("label")
         self.generate_pc_btn = QtWidgets.QPushButton(self.pcode_gb)
-        self.generate_pc_btn.setGeometry(QtCore.QRect(10, 80, 121, 31))
+        self.generate_pc_btn.setGeometry(QtCore.QRect(10, 80, 151, 41))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.generate_pc_btn.setFont(font)
         self.generate_pc_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.generate_pc_btn.setObjectName("generate_pc_btn")
+        set_button_stylesheet(self.generate_pc_btn)
         self.hide_pcode = QtWidgets.QRadioButton(self.pcode_gb)
         self.hide_pcode.setGeometry(QtCore.QRect(220, 30, 131, 31))
         self.hide_pcode.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.hide_pcode.setObjectName("search_pcode_btn")
         self.copy_pc_btn = QtWidgets.QPushButton(self.pcode_gb)
-        self.copy_pc_btn.setGeometry(QtCore.QRect(230, 80, 131, 31))
+        self.copy_pc_btn.setGeometry(QtCore.QRect(230, 80, 131, 41))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.copy_pc_btn.setFont(font)
         self.copy_pc_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.copy_pc_btn.setStyleSheet("background-color: rgb(49, 49, 49);\n"
-"gridline-color: rgb(71, 71, 71);\n"
-"border-color: rgb(118, 118, 118);\n"
-"color: rgb(220, 220, 220);\n"
-"selection-background-color: rgb(252, 165, 3);\n"
-"selection-color: rgb(43, 43, 43);")
+        set_button_stylesheet(self.copy_pc_btn)
         self.copy_pc_btn.setObjectName("copy_pc_btn")
         self.filename = QtWidgets.QLineEdit(self.centralwidget)
         self.filename.setGeometry(QtCore.QRect(10, 20, 401, 31))
@@ -129,8 +125,7 @@ class EditorWindow(QMainWindow):
         self.create_paste_btn = QtWidgets.QPushButton(self.centralwidget)
         self.create_paste_btn.setGeometry(QtCore.QRect(800, 20, 61, 51))
         self.create_paste_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.create_paste_btn.setStyleSheet("color: rgb(255, 255, 255);\n"
-"background-color: rgb(0, 52, 48);")
+        set_button_stylesheet(self.create_paste_btn)
         self.create_paste_btn.setObjectName("create_paste_btn")
         self.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(self)
@@ -139,7 +134,8 @@ class EditorWindow(QMainWindow):
 
         self.to_this_btn = QtWidgets.QPushButton(self)
         self.to_this_btn.setText('')
-        self.to_this_btn.setGeometry(QtCore.QRect(290, 97, 41, 41))
+        self.to_this_btn.setGeometry(QtCore.QRect(290, 97, 51, 41))
+        set_button_stylesheet(self.to_this_btn)
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -148,12 +144,12 @@ class EditorWindow(QMainWindow):
         self.generate_pcode()
 
     def set_functions(self):
-            self.copy_btn.clicked.connect(lambda: copy(self.textEdit.toPlainText()))
-            self.generate_pc_btn.clicked.connect(lambda: self.generate_pcode())
-            self.hide_pcode.clicked.connect(lambda: self.hide_pcode_f())
-            self.copy_pc_btn.clicked.connect(lambda: copy(self.pcode))
-            self.save_btn.clicked.connect(lambda: self.save_paste())
-            self.to_this_btn.clicked.connect(lambda: self.change_file())
+        self.copy_btn.clicked.connect(lambda: copy(self.textEdit.toPlainText()))
+        self.generate_pc_btn.clicked.connect(lambda: self.generate_pcode())
+        self.hide_pcode.clicked.connect(lambda: self.hide_pcode_f())
+        self.copy_pc_btn.clicked.connect(lambda: copy(self.pcode))
+        self.save_btn.clicked.connect(lambda: self.save_paste())
+        self.to_this_btn.clicked.connect(lambda: self.change_file())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -242,11 +238,3 @@ class EditorWindow(QMainWindow):
 
         except sqlite3.Error as error:
             print('[!] sqlite3 error:', error)
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ui = EditorWindow()
-    ui.show()
-    sys.exit(app.exec_())
