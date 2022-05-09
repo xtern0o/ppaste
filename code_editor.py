@@ -1,6 +1,6 @@
 import sqlite3
 
-from PyQt5 import QtCore, QtGui, QtWidgets, Qt
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 from pyperclip import copy
@@ -287,3 +287,4 @@ class EditorWindow(QMainWindow):
         sql_cursor.execute(sql_request_exec, sql_request_values)
         sql_cursor.close()
         self.generate_pcode()
+
